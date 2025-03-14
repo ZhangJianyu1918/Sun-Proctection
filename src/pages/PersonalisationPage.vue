@@ -6,16 +6,6 @@
       <div class="form-content">
         <div class="form-section">
           <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" v-model="formData.name" class="form-input" />
-          </div>
-          
-          <div class="form-group">
-            <label for="age">Age</label>
-            <input type="number" id="age" v-model="formData.age" class="form-input" />
-          </div>
-          
-          <div class="form-group">
             <label for="gender">Gender</label>
             <select id="gender" v-model="formData.gender" class="form-select">
               <option disabled value="">Select gender</option>
@@ -97,8 +87,6 @@
     data() {
       return {
         formData: {
-          name: '',
-          age: '',
           gender: '',
           skinType: '',
           skinTone: '',
@@ -119,7 +107,7 @@
         }
         
         // Simple recommendation logic based on input
-        let rec = `Hello ${this.formData.name}, based on your profile (${this.formData.age} years old, `;
+        let rec = `Hello, based on your profile, `;
         rec += `${this.formData.skinType} skin type, ${this.formData.skinTone} skin tone), `;
         
         if (this.formData.sunExposure === 'high' || this.formData.sunExposure === 'extreme') {
