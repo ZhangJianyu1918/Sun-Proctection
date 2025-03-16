@@ -1,12 +1,16 @@
 <template>
     <div class="suggestion-container">
-      <h1 class="title">Personalised Suggestion</h1>
+      <h1 class="title">
+        <font-awesome-icon icon="sun" /> Personalised Suggestion
+      </h1>
       <div class="divider"></div>
   
       <div class="form-content">
         <div class="form-section">
           <div class="form-group">
-            <label for="gender">Gender</label>
+            <label for="gender">
+              <font-awesome-icon icon="user" /> Gender
+            </label>
             <select id="gender" v-model="formData.gender" class="form-select">
               <option disabled value="">Select gender</option>
               <option value="male">Male</option>
@@ -17,7 +21,9 @@
           </div>
   
           <div class="form-group">
-            <label for="skinType">Skin Type</label>
+            <label for="skinType">
+              <font-awesome-icon icon="palette" /> Skin Type
+            </label>
             <select id="skinType" v-model="formData.skinType" class="form-select">
               <option disabled value="">Select skin type</option>
               <option value="normal">Normal</option>
@@ -29,7 +35,9 @@
           </div>
   
           <div class="form-group">
-            <label for="skinTone">Skin Tone</label>
+            <label for="skinTone">
+              <font-awesome-icon icon="paint-brush" /> Skin Tone
+            </label>
             <select id="skinTone" v-model="formData.skinTone" class="form-select">
               <option disabled value="">Select skin tone</option>
               <option value="fair">Fair</option>
@@ -42,7 +50,9 @@
           </div>
   
           <div class="form-group">
-            <label for="sunscreenUsage">Sunscreen Usage</label>
+            <label for="sunscreenUsage">
+              <font-awesome-icon icon="umbrella-beach" /> Sunscreen Usage
+            </label>
             <select id="sunscreenUsage" v-model="formData.sunscreenUsage" class="form-select">
               <option disabled value="">Select frequency of sunscreen usage</option>
               <option value="daily">Daily</option>
@@ -54,7 +64,9 @@
           </div>
   
           <div class="form-group">
-            <label for="sunExposure">Sun Exposure</label>
+            <label for="sunExposure">
+              <font-awesome-icon icon="sun" /> Sun Exposure
+            </label>
             <select id="sunExposure" v-model="formData.sunExposure" class="form-select">
               <option disabled value="">Select frequency of sun exposure</option>
               <option value="minimal">Minimal (indoors most of the time)</option>
@@ -65,36 +77,51 @@
             </select>
           </div>
   
-          <button @click="saveChanges" class="save-button">Save Change</button>
+          <div class="button-container">
+            <button @click="saveChanges" class="save-button">
+              <font-awesome-icon icon="save" /> Save Change
+            </button>
+          </div>
         </div>
   
         <div class="recommendation-section">
-          <h2 class="recommendation-title">Recommendation</h2>
+          <h2 class="recommendation-title">
+            <font-awesome-icon icon="lightbulb" /> Recommendation
+          </h2>
           <div class="recommendation-content" v-if="recommendation">
             <p>{{ recommendation }}</p>
-            <!-- Time picker for custom reminder -->
             <div class="form-group reminder-time-group">
-              <label for="reminderTime">Set Reminder Time (minutes)</label>
-              <input
-                type="number"
-                id="reminderTime"
-                v-model.number="formData.reminderTime"
-                class="form-input"
-                min="1"
-                placeholder="Enter minutes"
-              >
+              <label for="reminderTime">
+                <font-awesome-icon icon="clock" /> Set Reminder Time
+              </label>
+              <div class="time-input-container">
+                <input
+                  type="number"
+                  id="reminderTime"
+                  v-model.number="formData.reminderTime"
+                  class="form-input time-input"
+                  min="1"
+                  placeholder="Enter time"
+                >
+                <select v-model="formData.timeUnit" class="form-select time-unit">
+                  <option value="minutes">Minutes</option>
+                  <option value="seconds">Seconds</option>
+                </select>
+              </div>
             </div>
-            <!-- Reminder button -->
+          </div>
+          <div class="recommendation-content" v-else>
+            <p>Please fill out the form to receive a personalised recommendation.</p>
+          </div>
+          <div class="button-container">
             <button
+              v-if="recommendation"
               @click="setReminder"
               class="reminder-button"
               :disabled="formData.reminderTime <= 0 || !recommendation"
             >
-              Set Reminder
+              <font-awesome-icon icon="bell" /> Set Reminder
             </button>
-          </div>
-          <div class="recommendation-content" v-else>
-            <p>Please fill out the form to receive a personalised recommendation.</p>
           </div>
         </div>
       </div>
@@ -112,16 +139,16 @@
           skinTone: '',
           sunscreenUsage: '',
           sunExposure: '',
-          reminderTime: 0, // Time in minutes for reminder
+          reminderTime: 0,
+          timeUnit: 'minutes',
         },
         recommendation: '',
-        reminderTimeout: null, // Store the timeout ID
+        reminderTimeout: null,
       };
     },
     methods: {
       saveChanges() {
         this.generateRecommendation();
-        // Reminder will be set manually by clicking "Set Reminder"
       },
       generateRecommendation() {
         if (!this.validateForm()) {
@@ -148,30 +175,30 @@
         this.recommendation = rec;
       },
       validateForm() {
-        // Simple validation to check if all fields are filled
         for (const key in this.formData) {
-          if (key !== 'reminderTime' && this.formData[key] === '') {
+          if (key !== 'reminderTime' && key !== 'timeUnit' && this.formData[key] === '') {
             return false;
           }
         }
         return true;
       },
       setReminder() {
-        // Clear existing timeout if any
         if (this.reminderTimeout) {
           clearTimeout(this.reminderTimeout);
         }
   
-        // Set new reminder
+        const delay = this.formData.timeUnit === 'seconds'
+          ? this.formData.reminderTime * 1000
+          : this.formData.reminderTime * 60 * 1000;
+  
         this.reminderTimeout = setTimeout(() => {
           alert(`Reminder: ${this.recommendation}`);
-        }, this.formData.reminderTime * 60 * 1000); // Convert minutes to milliseconds
+        }, delay);
   
-        alert(`Reminder set for ${this.formData.reminderTime} minutes!`);
+        alert(`Reminder set for ${this.formData.reminderTime} ${this.formData.timeUnit}!`);
       },
     },
     beforeUnmount() {
-      // Clean up timeout when component is destroyed
       if (this.reminderTimeout) {
         clearTimeout(this.reminderTimeout);
       }
@@ -185,6 +212,9 @@
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
   
   .title {
@@ -192,36 +222,48 @@
     font-size: 36px;
     color: #4840b7;
     margin-bottom: 20px;
+    flex-shrink: 0;
   }
   
   .divider {
     border-bottom: 1px solid #e0e0e0;
     margin-bottom: 30px;
+    flex-shrink: 0;
   }
   
   .form-content {
     display: flex;
     gap: 20px;
+    flex: 1;
+    overflow: hidden;
   }
   
   .form-section {
     flex: 1;
     padding-right: 20px;
     border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   
   .recommendation-section {
     flex: 1;
     padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   
   .form-group {
     margin-bottom: 20px;
+    flex-shrink: 0;
   }
   
   .reminder-time-group {
     margin-top: 20px;
     margin-bottom: 10px;
+    flex-shrink: 0;
   }
   
   label {
@@ -246,7 +288,28 @@
     background-color: #f0f2f5;
   }
   
-  .save-button {
+  .time-input-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .time-input {
+    flex: 1;
+  }
+  
+  .time-unit {
+    width: 120px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    flex-shrink: 0;
+  }
+  
+  .save-button, .reminder-button {
     background-color: #4840b7;
     color: white;
     border: none;
@@ -257,44 +320,37 @@
     transition: background-color 0.3s;
   }
   
-  .save-button:hover {
-    background-color: #3b33a0;
-  }
-  
-  .recommendation-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .recommendation-content {
-    line-height: 1.6;
-    min-height: 200px;
-    border: 2px solid #4840b7;
-    padding: 20px;
-    background-color: #e6e6fa;
-    border-radius: 8px;
-  }
-  
-  .reminder-button {
-    background-color: #4840b7;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-    display: block;
-  }
-  
-  .reminder-button:hover {
+  .save-button:hover, .reminder-button:hover {
     background-color: #3b33a0;
   }
   
   .reminder-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+  }
+  
+  label font-awesome-icon,
+  .save-button font-awesome-icon,
+  .reminder-button font-awesome-icon,
+  .recommendation-title font-awesome-icon {
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  
+  .recommendation-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  
+  .recommendation-content {
+    line-height: 1.6;
+    border: 2px solid #4840b7;
+    padding: 20px;
+    background-color: #e6e6fa;
+    border-radius: 8px;
+    flex: 1;
+    overflow-y: auto;
   }
   
   @media (max-width: 768px) {
@@ -312,6 +368,19 @@
   
     .recommendation-section {
       padding-left: 0;
+    }
+  
+    .time-input-container {
+      flex-direction: column;
+      gap: 5px;
+    }
+  
+    .time-unit {
+      width: 100%;
+    }
+  
+    .button-container {
+      margin-top: 10px;
     }
   }
   </style>
