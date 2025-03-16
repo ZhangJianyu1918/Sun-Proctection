@@ -44,6 +44,15 @@
                 Personalisation
                 </router-link>
             </li>
+            <li class="nav-item">
+                <router-link
+                class="nav-link fs-5"
+                to="/chart"
+                :class="{ 'active': $route.path === '/chart' }"
+                >
+                Chart
+                </router-link>
+            </li>
             </ul>
         </div>
         </div>

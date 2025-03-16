@@ -3,9 +3,10 @@
     <!-- 搜索部分 -->
     <div class="search-container mb-4">
       <div class="input-group w-75 mx-auto">
-        <input v-model="address" placeholder="Search location" class="form-control border-0 fs-5 py-2 bg-light" />
+        <input v-model="address" placeholder="Search location" @input="validateCity" class="form-control border-0 fs-5 py-2 bg-light" />
         <button @click="getUVIndex" class="btn btn-primary px-4">Search</button>
       </div>
+      <p v-if="errorMessage" class="text-danger mt-1">{{ errorMessage }}</p>
     </div>
 
     <!-- 天气地图容器 -->
@@ -76,6 +77,16 @@ const formattedDate = ref(new Date().toLocaleDateString("en-GB", { day: "2-digit
 const googleKey = "AIzaSyC8ZRwMu4odONGFCfbUCIQblmDS0itPV_Y"
 const weatherKey = "88da8b95abd245a18d222337251303"
 const openWeatherKey = "7ee007781b59c818c0ddd4f14ecfe857"
+const cityRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+const errorMessage = ref('');
+
+const validateCity = () => {
+  if (address.value && !cityRegex.test(address.value)) {
+    errorMessage.value = 'Please enter a valid city name (letters, spaces, hyphens, or apostrophes only).';
+  } else {
+    errorMessage.value = '';
+  }
+};
 // 地图控制变量
 const activeLayer = ref('temp');
 const showCities = ref(true);
