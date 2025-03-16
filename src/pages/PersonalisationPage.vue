@@ -2,19 +2,9 @@
     <div class="suggestion-container">
       <h1 class="title">Personalised Suggestion</h1>
       <div class="divider"></div>
-      
+  
       <div class="form-content">
         <div class="form-section">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" v-model="formData.name" class="form-input" />
-          </div>
-          
-          <div class="form-group">
-            <label for="age">Age</label>
-            <input type="number" id="age" v-model="formData.age" class="form-input" />
-          </div>
-          
           <div class="form-group">
             <label for="gender">Gender</label>
             <select id="gender" v-model="formData.gender" class="form-select">
@@ -25,7 +15,7 @@
               <option value="other">Other</option>
             </select>
           </div>
-          
+  
           <div class="form-group">
             <label for="skinType">Skin Type</label>
             <select id="skinType" v-model="formData.skinType" class="form-select">
@@ -37,7 +27,7 @@
               <option value="sensitive">Sensitive</option>
             </select>
           </div>
-          
+  
           <div class="form-group">
             <label for="skinTone">Skin Tone</label>
             <select id="skinTone" v-model="formData.skinTone" class="form-select">
@@ -50,7 +40,7 @@
               <option value="deep">Deep</option>
             </select>
           </div>
-          
+  
           <div class="form-group">
             <label for="sunscreenUsage">Sunscreen Usage</label>
             <select id="sunscreenUsage" v-model="formData.sunscreenUsage" class="form-select">
@@ -62,7 +52,7 @@
               <option value="never">Never</option>
             </select>
           </div>
-          
+  
           <div class="form-group">
             <label for="sunExposure">Sun Exposure</label>
             <select id="sunExposure" v-model="formData.sunExposure" class="form-select">
@@ -74,14 +64,34 @@
               <option value="extreme">Extreme (outdoor occupation)</option>
             </select>
           </div>
-          
+  
           <button @click="saveChanges" class="save-button">Save Change</button>
         </div>
-        
+  
         <div class="recommendation-section">
           <h2 class="recommendation-title">Recommendation</h2>
           <div class="recommendation-content" v-if="recommendation">
             <p>{{ recommendation }}</p>
+            <!-- Time picker for custom reminder -->
+            <div class="form-group reminder-time-group">
+              <label for="reminderTime">Set Reminder Time (minutes)</label>
+              <input
+                type="number"
+                id="reminderTime"
+                v-model.number="formData.reminderTime"
+                class="form-input"
+                min="1"
+                placeholder="Enter minutes"
+              >
+            </div>
+            <!-- Reminder button -->
+            <button
+              @click="setReminder"
+              class="reminder-button"
+              :disabled="formData.reminderTime <= 0 || !recommendation"
+            >
+              Set Reminder
+            </button>
           </div>
           <div class="recommendation-content" v-else>
             <p>Please fill out the form to receive a personalised recommendation.</p>
@@ -97,62 +107,76 @@
     data() {
       return {
         formData: {
-          name: '',
-          age: '',
           gender: '',
           skinType: '',
           skinTone: '',
           sunscreenUsage: '',
-          sunExposure: ''
+          sunExposure: '',
+          reminderTime: 0, // Time in minutes for reminder
         },
-        recommendation: ''
-      }
+        recommendation: '',
+        reminderTimeout: null, // Store the timeout ID
+      };
     },
     methods: {
       saveChanges() {
         this.generateRecommendation();
+        // Reminder will be set manually by clicking "Set Reminder"
       },
       generateRecommendation() {
         if (!this.validateForm()) {
           alert('Please fill out all fields to receive a recommendation.');
           return;
         }
-        
-        // Simple recommendation logic based on input
-        let rec = `Hello ${this.formData.name}, based on your profile (${this.formData.age} years old, `;
-        rec += `${this.formData.skinType} skin type, ${this.formData.skinTone} skin tone), `;
-        
+  
+        let rec = `Hello, based on your profile: `;
+        rec += `Your skin type is ${this.formData.skinType}, and your skin tone is ${this.formData.skinTone}. `;
+  
         if (this.formData.sunExposure === 'high' || this.formData.sunExposure === 'extreme') {
-          if (this.formData.sunscreenUsage === 'rarely' || this.formData.sunscreenUsage === 'never') {
-            rec += 'we strongly recommend daily application of SPF 50+ sunscreen and wearing protective clothing.';
-          } else {
-            rec += 'continue using sunscreen regularly and consider using additional sun protection measures.';
-          }
+          rec += `Given your high sun exposure, we strongly recommend daily application of SPF 50+ sunscreen and wearing protective clothing.`;
         } else {
-          if (this.formData.skinType === 'sensitive') {
-            rec += 'we recommend gentle, fragrance-free products and daily SPF 30+ sunscreen.';
-          } else if (this.formData.skinType === 'oily') {
-            rec += 'we recommend oil-free, non-comedogenic products and a lightweight SPF.';
-          } else if (this.formData.skinType === 'dry') {
-            rec += 'we recommend hydrating products with ceramides and a moisturizing sunscreen.';
-          } else {
-            rec += 'we recommend a balanced skincare routine and daily SPF protection.';
-          }
+          rec += `We recommend a balanced skincare routine and using SPF protection regularly.`;
         }
-        
+  
+        if (this.formData.sunExposure === 'high' || this.formData.sunExposure === 'extreme') {
+          rec += ` Don't forget to wear protective clothing like hats and long sleeves to minimize sun exposure.`;
+        }
+        if (this.formData.sunscreenUsage === 'rarely' || this.formData.sunscreenUsage === 'never') {
+          rec += ` Consider making sunscreen a daily habit to protect your skin from harmful UV rays.`;
+        }
+  
         this.recommendation = rec;
       },
       validateForm() {
         // Simple validation to check if all fields are filled
         for (const key in this.formData) {
-          if (this.formData[key] === '') {
+          if (key !== 'reminderTime' && this.formData[key] === '') {
             return false;
           }
         }
         return true;
+      },
+      setReminder() {
+        // Clear existing timeout if any
+        if (this.reminderTimeout) {
+          clearTimeout(this.reminderTimeout);
+        }
+  
+        // Set new reminder
+        this.reminderTimeout = setTimeout(() => {
+          alert(`Reminder: ${this.recommendation}`);
+        }, this.formData.reminderTime * 60 * 1000); // Convert minutes to milliseconds
+  
+        alert(`Reminder set for ${this.formData.reminderTime} minutes!`);
+      },
+    },
+    beforeUnmount() {
+      // Clean up timeout when component is destroyed
+      if (this.reminderTimeout) {
+        clearTimeout(this.reminderTimeout);
       }
-    }
-  }
+    },
+  };
   </script>
   
   <style scoped>
@@ -195,13 +219,17 @@
     margin-bottom: 20px;
   }
   
+  .reminder-time-group {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
   label {
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
   }
   
-  .form-input,
   .form-select {
     width: 100%;
     padding: 12px;
@@ -210,12 +238,12 @@
     background-color: #f0f2f5;
   }
   
-  .form-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1em;
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f0f2f5;
   }
   
   .save-button {
@@ -240,13 +268,40 @@
   
   .recommendation-content {
     line-height: 1.6;
+    min-height: 200px;
+    border: 2px solid #4840b7;
+    padding: 20px;
+    background-color: #e6e6fa;
+    border-radius: 8px;
+  }
+  
+  .reminder-button {
+    background-color: #4840b7;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  .reminder-button:hover {
+    background-color: #3b33a0;
+  }
+  
+  .reminder-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
   
   @media (max-width: 768px) {
     .form-content {
       flex-direction: column;
     }
-    
+  
     .form-section {
       border-right: none;
       padding-right: 0;
@@ -254,7 +309,7 @@
       padding-bottom: 20px;
       margin-bottom: 20px;
     }
-    
+  
     .recommendation-section {
       padding-left: 0;
     }
