@@ -3,7 +3,13 @@
     <!-- 搜索部分 -->
     <div class="search-container mb-4">
       <div class="input-group w-75 mx-auto">
-        <input v-model="address" placeholder="Search location" @input="validateCity" class="form-control border-0 fs-5 py-2 bg-light" />
+        <input v-model="address" pattern="[^0-9]*" 
+          placeholder="Search location" 
+          @input="validateCity" 
+          class="form-control border-0 fs-5 py-2 bg-light" 
+          oninput="this.value = this.value.replace(/\d/g, '')" 
+          onpaste="return false" 
+          onkeydown="return !/\d/.test(event.key)"/>
         <button @click="getUVIndex" class="btn btn-primary px-4">Search</button>
       </div>
       <p v-if="errorMessage" class="text-danger mt-1">{{ errorMessage }}</p>
