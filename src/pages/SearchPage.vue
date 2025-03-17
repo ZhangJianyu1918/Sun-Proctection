@@ -3,7 +3,10 @@
     <!-- 搜索部分 -->
     <div class="search-container mb-4">
       <div class="input-group w-75 mx-auto">
-        <input v-model="address" placeholder="Search location" @input="validateCity" class="form-control border-0 fs-5 py-2 bg-light" />
+        <input v-model="address" 
+          placeholder="Search location" 
+          @input="validateCity" 
+          class="form-control border-0 fs-5 py-2 bg-light" />
         <button @click="getUVIndex" class="btn btn-primary px-4">Search</button>
       </div>
       <p v-if="errorMessage" class="text-danger mt-1">{{ errorMessage }}</p>
@@ -81,12 +84,14 @@ const cityRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
 const errorMessage = ref('');
 
 const validateCity = () => {
-  if (address.value && !cityRegex.test(address.value)) {
-    errorMessage.value = 'Please enter a valid city name (letters, spaces, hyphens, or apostrophes only).';
+  address.value = address.value.replace(/\d/g, ""); // 直接移除数字
+  if (!cityRegex.test(address.value)) {
+    errorMessage.value = 'Please enter a valid city name.';
   } else {
     errorMessage.value = '';
   }
 };
+
 // 地图控制变量
 const activeLayer = ref('temp');
 const showCities = ref(true);
