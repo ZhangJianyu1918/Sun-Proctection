@@ -8,10 +8,12 @@ import { Line } from 'vue-chartjs';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+// import vueCrypt from 'vue-crypt'
 
 library.add(fas);
 Chart.register(...registerables);
 const app = createApp(App)
+// app.use(vueCrypt)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(router)
 app.component('LineChart', Line);
