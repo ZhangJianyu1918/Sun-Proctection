@@ -155,23 +155,47 @@
           alert('Please fill out all fields to receive a recommendation.');
           return;
         }
-  
-        let rec = `Hello, based on your profile: `;
+
+        let rec = `Hello! Based on your profile: `;
         rec += `Your skin type is ${this.formData.skinType}, and your skin tone is ${this.formData.skinTone}. `;
-  
+
+        // 根据日晒程度推荐防晒霜和衣物
         if (this.formData.sunExposure === 'high' || this.formData.sunExposure === 'extreme') {
-          rec += `Given your high sun exposure, we strongly recommend daily application of SPF 50+ sunscreen and wearing protective clothing.`;
+          rec += `Given your high sun exposure, we strongly recommend applying SPF 50+ sunscreen generously every day. `;
+          rec += `Make sure to cover all exposed areas, such as your face, neck, ears, arms, and hands. Reapply every 2 hours, especially if you're sweating or swimming. `;
+          rec += `For clothing, opt for UV-protective garments like long-sleeve shirts, wide-brimmed hats, and sunglasses with UV protection. Darker colors or tightly woven fabrics, such as cotton or polyester blends, offer better sun defense.`;
+        } else if (this.formData.sunExposure === 'moderate') {
+          rec += `With moderate sun exposure, we recommend using SPF 30+ sunscreen daily on your face, neck, and any exposed skin. Reapply every 3-4 hours for consistent protection. `;
+          rec += `Wear lightweight, breathable clothing like long-sleeve linen shirts or a cap to shield yourself during peak sun hours (10 AM - 4 PM).`;
         } else {
-          rec += `We recommend a balanced skincare routine and using SPF protection regularly.`;
+          rec += `Even with low sun exposure, apply SPF 15-30 sunscreen to your face and hands daily as a preventive measure. `;
+          rec += `A simple outfit with a light jacket or a scarf can provide extra coverage when you're outdoors for extended periods.`;
         }
-  
-        if (this.formData.sunExposure === 'high' || this.formData.sunExposure === 'extreme') {
-          rec += ` Don't forget to wear protective clothing like hats and long sleeves to minimize sun exposure.`;
-        }
+
+        // 根据防晒霜使用频率提供建议
         if (this.formData.sunscreenUsage === 'rarely' || this.formData.sunscreenUsage === 'never') {
-          rec += ` Consider making sunscreen a daily habit to protect your skin from harmful UV rays.`;
+          rec += ` Since you rarely or never use sunscreen, it’s time to make it a daily habit! Start with a broad-spectrum SPF 30+ sunscreen and apply it to your face, neck, and any exposed areas every morning. `;
+          rec += `Pair this with protective clothing, such as a loose-fitting long-sleeve top or a bucket hat, to reduce UV damage over time.`;
+        } else if (this.formData.sunscreenUsage === 'sometimes') {
+          rec += ` You use sunscreen sometimes, which is a good start! To maximize protection, apply SPF 30+ consistently to your face, ears, and arms, even on cloudy days. `;
+          rec += `Add a lightweight UV-protective jacket or a wide scarf to your wardrobe for extra coverage.`;
+        } else {
+          rec += ` Great job using sunscreen regularly! Keep applying SPF 30+ or higher to your face, neck, chest, and hands. Don’t forget to reapply after sweating or towel-drying. `;
+          rec += `Enhance your routine with clothing like a straw hat or long-sleeve rash guard for outdoor activities.`;
         }
-  
+
+        // 根据肤质添加个性化建议
+        if (this.formData.skinType === 'oily') {
+          rec += ` For your oily skin, choose a non-comedogenic, mattifying sunscreen and lightweight clothing like cotton tees to stay comfortable.`;
+        } else if (this.formData.skinType === 'dry') {
+          rec += ` With dry skin, use a hydrating SPF moisturizer on your face and arms, and opt for soft, breathable fabrics like bamboo or cotton clothing.`;
+        } else if (this.formData.skinType === 'sensitive') {
+          rec += ` For sensitive skin, pick a mineral-based sunscreen (with zinc oxide or titanium dioxide) for your face and body, and wear loose, soft clothing to avoid irritation.`;
+        }
+
+        // 结尾鼓励
+        rec += ` Combining sunscreen with the right clothing will keep your skin healthy and glowing. Stay protected!`;
+
         this.recommendation = rec;
       },
       validateForm() {
