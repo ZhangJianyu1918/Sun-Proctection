@@ -147,7 +147,8 @@ function initMap() {
     center: [-26.037, 142.3828], // 澳洲中心点
     zoom: 4,
     minZoom: 3,
-    maxZoom: 10
+    maxZoom: 10,
+    zoomControl: false
   });
 
   // 添加基础地图图层（更换为Mapbox轻色地图，更适合展示温度图层）
