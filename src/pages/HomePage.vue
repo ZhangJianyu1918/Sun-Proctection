@@ -1,12 +1,14 @@
 <template>
-  <section class="hero-section bg-light py-5">
-    <div class="container text-center">
-      <div class="row justify-content-center align-items-center">
-        <div class="col-lg-8">
-          <h1 class="display-4 fw-bold text-primary">
-            <font-awesome-icon icon="shield-sun" class="me-2" /> Protect Your Skin
-          </h1>
-          <p class="lead text-muted">Advanced sun protection solutions tailored to your unique skin needs.</p>
+  <section class="hero-section">
+    <div class="background-div">
+      <div class="container text-center">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold text-white">
+              <font-awesome-icon icon="shield-sun" class="me-2" /> Protect Your Skin
+            </h1>
+            <p class="lead text-white">Advanced sun protection solutions tailored to your unique skin needs.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -22,7 +24,7 @@
         <div class="col-md-4">
           <router-link to="/search" class="card-link">
             <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
-              <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3">
+              <div class="feature-icon bg-info text-white rounded-circle mx-auto mb-3">
                 <font-awesome-icon icon="search" />
               </div>
               <h3 class="fs-5 fw-bold text-dark">Search UV Index</h3>
@@ -46,7 +48,7 @@
         <div class="col-md-4">
           <router-link to="/chart" class="card-link">
             <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
-              <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3">
+              <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3">
                 <font-awesome-icon icon="chart-bar" />
               </div>
               <h3 class="fs-5 fw-bold text-dark">Get City Chart</h3>
@@ -129,5 +131,38 @@
   border-radius: 50%; /* 确保圆形 */
   background-color: #5470c6; /* 蓝色背景，与图片匹配 */
   color: white; /* 图标颜色 */
+}
+
+.hero-section {
+  position: relative;
+}
+
+.background-div {
+  width: 100%;
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(~@/assets/sun-protection.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: zoom 5s infinite alternate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes zoom {
+  0% { background-size: 100%; }
+  100% { background-size: 110%; }
+}
+
+.text-white {
+  color: #fff !important;
+}
+
+@media (max-width: 768px) {
+  .background-div {
+    min-height: 80vh;
+    animation: none; /* 移动端禁用动画 */
+  }
 }
 </style>
